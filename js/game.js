@@ -28,10 +28,14 @@ class Game {
             this.gameBoard.restoreObstacles();
         }
         this.player.draw(ctx);
+        
         for (let i = 0; i < this.player.bullets.length; i++ ){
             // console.log("this.gameBoard.obstacles : "+ this.gameBoard.obstacles);
-            this.player.bullets[i].move(this.gameBoard.obstacles);
-            this.player.bullets[i].draw(ctx);
+            if (this.player.bullets[i].move(this.gameBoard.obstacles)) {
+                this.player.bullets.splice(i,1);
+            } else {
+             this.player.bullets[i].draw(ctx);
+            }
         }
         
         // this.keepers.forEach((keeper, index) => {
@@ -90,7 +94,7 @@ class Game {
     }
 }
 
-const game = new Game()
+const game = new Game();
 
 game.start();
 

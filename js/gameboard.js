@@ -4,6 +4,7 @@ class GameBoard {
     this.width = 630;
     this.height = 630;
     this.obstacles = [];
+    this.surprise = [];
     this.keepers = [];
   }
   initialise() {
