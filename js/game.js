@@ -5,17 +5,31 @@ class Game {
         this.keepers = [];
         this.level = 1;
         this.isObstacleCreated = false;
+        this.gameTime = 100;
     }
     start() {
+        console.log("this.gameBoard : " + this.gameBoard);
         this.gameBoard.initialise();
         this.gameBoard.createObstacles(this.level);
+        this.gameBoard.createSurprises(this.level);
+
         console.log("obstacles create" + this.gameBoard.obstacles); 
         this.isObstacleCreated = true;
         window.requestAnimationFrame(this.gameLoop.bind(this));
-        this.addListeners(this.player, this.gameBoard.obstacles, this.gameBoard.ctx );
-        // setInterval(() => {
-        //     this.keepers.push(new Keeper)
-        // }, 2000)
+        this.addListeners(this.player, this.gameBoard.obstacles, this.gameBoard.surprises );
+        
+        let gameRemaningTime = document.getElementById("gameTime");
+        setInterval(() => {
+            this.gameTime--;
+            // console.log("this.gameTime = " + this.gameTime);
+            if (this.player.homeRached) {
+                gameRemaningTime.innerHTML = `Congratulations !!! you won the game`;
+            } else if (this.gameTime > 0) {
+                gameRemaningTime.innerHTML = `Remaining Time : ${this.gameTime}`;
+            } else {
+                gameRemaningTime.innerHTML = `Sorry, Game Over !!! Better luck next time`;
+            }  
+        }, 1000);
     }
     gameLoop() {
         const ctx = this.gameBoard.ctx;
@@ -23,8 +37,10 @@ class Game {
         this.gameBoard.createGameBoard();
         if (!this.isObstacleCreated) {
             this.gameBoard.createObstacles(this.level);
+            this.gameBoard.createSurprises(this.level);
             this.isObstacleCreated = true;
         } else {
+            this.gameBoard.restoreSurprises();
             this.gameBoard.restoreObstacles();
         }
         this.player.draw(ctx);
@@ -50,8 +66,9 @@ class Game {
         //         this.keepers.splice(index, 1)
         //     }
         // })
-
-        window.requestAnimationFrame(this.gameLoop.bind(this))
+        if(this.gameTime > 0 && this.player.lifeLeft > 0 && !this.player.homeRached) {
+            window.requestAnimationFrame(this.gameLoop.bind(this));
+        }
     }
 
     // checkCollision(keeper, player) {
@@ -66,24 +83,24 @@ class Game {
 
     // }
 
-    addListeners(player, obstacles, ctx) {
+    addListeners(player, obstacles, surprises) {
         document.addEventListener('keydown', function(e) {
             switch(e.key) {
                 case 'ArrowLeft':
                     // console.log("Move Left");
-                    player.moveLeft(obstacles);
+                    player.moveLeft(obstacles,surprises);
                     break;
                 case 'ArrowRight':
                     // console.log("Move Right");
-                    player.moveRight(obstacles);
+                    player.moveRight(obstacles, surprises);
                     break;
                 case 'ArrowUp':
                     // console.log("Move Up");
-                    player.moveUp(obstacles);
+                    player.moveUp(obstacles, surprises);
                     break;
                 case 'ArrowDown':
                     // console.log("Move Down");
-                    player.moveDown(obstacles);
+                    player.moveDown(obstacles, surprises);
                     break;
                 case 's':
                     // console.log("obstacles : "+obstacles)
@@ -97,4 +114,7 @@ class Game {
 const game = new Game();
 
 game.start();
+
+// $startButton = document.getElementById("start-game-button");
+// $startButton.addEventListener('click', game.start.bind(this));
 

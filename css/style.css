@@ -7,3 +7,8 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
+#gameTime {
+    font-size: large;
+    border: 2px solid red;
+}
