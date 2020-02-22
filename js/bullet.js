@@ -4,7 +4,7 @@ class Bullet {
     this.speed = 1;
     this.x = x;
     this.y = y;
-    this.move([]);
+    this.move([],[]);
   }
   draw(ctx) {
     ctx.beginPath();
@@ -14,11 +14,12 @@ class Bullet {
     ctx.closePath();
     // ctx.drawImage(this.mario_image, this.x - 15, this.y - 15);
   }
-  move(obstacles) {
-    // console.log("obstacles : " + obstacles);
+  move(obstacles, keepers) {
+    // console.log("keepers[0] : " + keepers[0]);
     let newX;
     let newY;
     let hitObstacle = false;
+    let hitKeeper = false;
     switch (this.direction) {
       case "l":
         // console.log("Move Left");
@@ -26,9 +27,14 @@ class Bullet {
         if (newX < 0 ){
             hitObstacle = true;
         } else {
-            hitObstacle = this.checkObstacles(newX, this.y, obstacles);
+            if(obstacles.length > 0) {
+              hitObstacle = this.checkObstacles(newX, this.y, obstacles);
+            } 
+            if(keepers.length > 0 ){
+              hitKeeper = this.checkKeeperCollision(newX, this.y, keepers);
+            }
         }
-        if (!hitObstacle) {
+        if (!hitObstacle && !hitKeeper) {
           this.x = newX;
         } else {
           console.log("hit obstacles 1");
@@ -40,9 +46,14 @@ class Bullet {
         if (newX > 630 ){
             hitObstacle = true;
         } else {
+          if(obstacles.length > 0) {
             hitObstacle = this.checkObstacles(newX, this.y, obstacles);
+          } 
+          if(keepers.length > 0 ){
+            hitKeeper = this.checkKeeperCollision(newX, this.y, keepers);
+          }
         }
-        if (!hitObstacle) {
+        if (!hitObstacle && !hitKeeper) {
           this.x = newX;
         } else {
           console.log("hit obstacles 2");
@@ -54,30 +65,41 @@ class Bullet {
         if (newY < 0 ){
             hitObstacle = true;
         } else {
+          if(obstacles.length > 0) {
             hitObstacle = this.checkObstacles(this.x, newY, obstacles);
+          } 
+          if(keepers.length > 0 ){
+            hitKeeper = this.checkKeeperCollision(this.x, newY, keepers);
+          }
         }       
-        if (!hitObstacle) {
+        if (!hitObstacle && !hitKeeper) {
           this.y = newY;
         }else {
             console.log("hit obstacles 3");
           }
         break;
       case "s":
-        console.log("bullet move down");
+        // console.log("bullet move down");
         newY = this.y + this.speed;
         if (newY > 630 ){
             hitObstacle = true;
         } else {
+          if(obstacles.length > 0) {
             hitObstacle = this.checkObstacles(this.x, newY, obstacles);
+          } 
+          if(keepers.length > 0 ){
+            hitKeeper = this.checkKeeperCollision(this.x, newY, keepers);
+          }
         } 
-        if (!hitObstacle) {
-          this.y = newY;
-        }else {
+        if (!hitObstacle && !hitKeeper) {
+            this.y = newY;
+          }
+        else {
             console.log("hit obstacles 4");
           }
         break;
     }
-    return hitObstacle;
+    return (hitObstacle || hitKeeper);
   }
   checkObstacles(x, y, obstacles) {
     // console.log("obstacles : "+obstacles);
@@ -87,14 +109,30 @@ class Bullet {
       // console.log("obstacles0: " + obstacle[0] +" 1: "+ obstacle[1] +" x: "+ x +" y: "+ y);
       if (x >= obstacle[0] && x <= obstacle[0] + 30) {
         if (y >= obstacle[1] && y <= obstacle[1] + 30) {
-          console.log("Length of Obstacles array before" + obstacles.length) ;
           obstacles.splice(index, 1);
-          console.log("Length of Obstacles array after" + obstacles.length) ;
           hitObstacle = true;
         }
       }
       index++;
     });
     return hitObstacle;
+  }
+
+  checkKeeperCollision(x, y, keepers){
+    let hitKeeper = false;
+    let index = 0;
+    keepers.map(keeper => {      
+      if (x >= (keeper.x - 15) && x <= (keeper.x + 15)) {
+        if (y >= (keeper.y - 15) && y <= (keeper.y + 15)) {
+          keeper.health--;
+          if(keeper.health === 0 ){
+            keepers.splice(index, 1);
+          }         
+          hitKeeper = true;
+        }
+      }
+      index++;
+    });
+    return hitKeeper;    
   }
 }

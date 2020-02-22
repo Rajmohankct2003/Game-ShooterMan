@@ -1,33 +1,31 @@
 class Player {
   constructor() {
+    this.initialise();
+    this.mario_image = new Image();
+    this.mario_image.src = "./Paper-Mario-icon.png";
+  }
+  initialise() {
     this.speed = 5;
     this.shootingPower = false;
     this.health = 100;
-    this.lifeLeft = 3;
+    this.lifeLeft = 1;
     this.points = 0;
     this.radius = 10;
     this.x = 15;
     this.y = 15;
-    this.mario_image = new Image();
-    this.mario_image.src = "./Paper-Mario-icon.png";
     this.direction = "r";
     this.bullets = [];
     this.bulletPower = true;
     this.keyFound = false;
-    this.homeRached = false;
+    this.homeReached = false; 
+    this.timeFound = false;
   }
-
   draw(ctx) {
-    // ctx.beginPath()
-    // ctx.fillStyle = "red"
-    // ctx.arc(this.x, this.y, this.radius, 0, (Math.PI/180) * 360)
-    // ctx.fill()
-    // ctx.closePath()
     ctx.drawImage(this.mario_image, this.x - 15, this.y - 15);
   }
 
   shoot(obstacles) {
-    // console.log("Inside Shoot obstacles : " + obstacles);
+    //  console.log("Inside Shoot obstacles : " + obstacles);
     if (this.bullets.length < 3 && this.bulletPower) {
       let bullet = new Bullet(this.direction, this.x, this.y);
       this.bullets.push(bullet);
@@ -50,7 +48,8 @@ class Player {
         let distance = this.x % 30;
         if (distance > this.radius) {
           this.bulletPower = false;
-          this.x -= distance - this.radius;
+          this.x -= this.speed;
+          //this.x -= distance - this.radius;
         }
       } else {
         this.bulletPower = true;
@@ -83,7 +82,8 @@ class Player {
         this.bulletPower = false;
         let distance = 30 - (this.x % 30);
         if (distance > this.radius) {
-          this.x += distance - this.radius;
+          //this.x += distance - this.radius;
+          this.x += this.speed;
         }
       } else {
         this.bulletPower = true;
@@ -115,7 +115,8 @@ class Player {
         this.bulletPower = false;
         let distance = this.y % 30;
         if (distance > this.radius) {
-          this.y -= distance - this.radius;
+          // this.y -= distance - this.radius;
+          this.y -= this.speed;
         }
       } else {
         this.bulletPower = true;
@@ -148,7 +149,8 @@ class Player {
         this.bulletPower = false;
         let distance = 30 - (this.y % 30);
         if (distance > this.radius) {
-          this.y += distance - this.radius;
+          // this.y += distance - this.radius;
+          this.y += this.speed;
         }
       } else {
         this.bulletPower = true;
@@ -179,11 +181,11 @@ class Player {
     let hitSurprises = false;
     let index = 0;
     surprises.map(surprise => {
-      console.log("surprise, x, y " + surprise + "x :" + x +"y: " + y +  "index: " + index);
+      // console.log("surprise, x, y " + surprise + "x :" + x +"y: " + y +  "index: " + index);
       // if (x >= surprise[0] && x <= surprise[0] + 30) {
       //   if (y >= surprise[1] && y <= surprise[1] + 30) {
       if ((x >= surprise[0] + 10) && x <= surprise[0] + 20) {
-        if ((y >= surprise[1] +10) && y <= surprise[1] + 20) {
+        if ((y >= surprise[1] + 10) && y <= surprise[1] + 20) {
           hitSurprises = true;
           switch(surprise[2]) {
             case 'k':
@@ -192,14 +194,17 @@ class Player {
               break;
             case 'h':
               if(this.keyFound === true) {
-                 this.homeRached = true;
+                 this.homeReached = true;
               }
               break;
             case 'b':
-              console.log("Bomb found");
+              // console.log("Bomb found");
+              this.lifeLeft = 0;
               break;
             case 't':
-              console.log("Time found");
+              // console.log("Time found");
+              this.timeFound = true;
+              surprises.splice(index, 1);
               break;
             default:
               break;
