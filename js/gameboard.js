@@ -85,7 +85,7 @@ class GameBoard {
   }
 
   createKeepers(level) {
-    const numberOfKeepers = level * 3;
+    const numberOfKeepers = level * 5;
     for (let i = 0; i < numberOfKeepers ; ) {
       let xPosition = Number(Math.floor(Math.random() * 10)) * 60;
       let yPosition = Number(Math.floor(Math.random() * 10)) * 60;
@@ -103,7 +103,7 @@ class GameBoard {
   }
 
   createObstacles(level) {
-    const numberOfObstacles = level * 50;
+    const numberOfObstacles = level * 75;
     for (let i = 0; i < numberOfObstacles; i++) {
       let xPosition = Number(Math.floor(Math.random() * 10)) * 60;
       let yPosition = Number(Math.floor(Math.random() * 10)) * 60;

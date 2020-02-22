@@ -13,7 +13,7 @@ class Game {
     this.startButton.addEventListener("click", () => this.start());
   }
   start() {
-
+    
     this.player.initialise();
     this.gameTime = 100;
     this.gameBoard.initialise();
@@ -24,8 +24,8 @@ class Game {
     clearInterval(this.keeperInterval);
 
     this.isObstacleCreated = true;
-
-    window.requestAnimationFrame(this.gameLoop.bind(this));
+    window.cancelAnimationFrame(this.animationId);
+    this.animationId = window.requestAnimationFrame(this.gameLoop.bind(this));
 
     this.addListeners(
       this.player,
@@ -34,6 +34,7 @@ class Game {
     );
 
     let gameRemaningTime = document.getElementById("gameTime");
+    let hint = document.getElementById("hint");
     this.gameInterval = setInterval(() => {
       this.gameTime--;
       if(this.player.timeFound){
@@ -42,12 +43,19 @@ class Game {
      }
       if (this.player.lifeLeft === 0 ){
         gameRemaningTime.innerHTML = `Sorry, Game Over !!! Better luck next time`;
+        hint.innerHTML = "!!! Click Start Button to play again !!!";
       } else if (this.player.homeReached) {
         gameRemaningTime.innerHTML = `Congratulations !!! you won the game`;
-      } else if (this.gameTime > 0) {
-        gameRemaningTime.innerHTML = `Remaining Time : ${this.gameTime}`;
-      } else {
+        hint.innerHTML = "!!!      Wow, you are still alive    !!!";
+      } else if (this.gameTime <= 0) {
         gameRemaningTime.innerHTML = `Sorry, Game Over !!! Better luck next time`;
+        hint.innerHTML = "!!! Click Start Button to play again !!!";
+      } else if(!this.player.keyFound){
+        gameRemaningTime.innerHTML = `Remaining Time : ${this.gameTime}`;
+        hint.innerHTML = "!!! Find and pick the key my friend  !!!";
+      } else {
+        gameRemaningTime.innerHTML = `Remaining Time : ${this.gameTime}`;
+        hint.innerHTML = "!!!     Find and reach home soon     !!!";
       }
     }, 1000);
     this.keeperInterval = setInterval(() => {
@@ -131,6 +139,7 @@ class Game {
     this.player.draw(ctx);
 
     for (let i = 0; i < this.player.bullets.length; i++) {
+        console.log("this.player.bullets[i].speed"+this.player.bullets[i].speed)
       if (this.player.bullets[i].move(this.gameBoard.obstacles, this.gameBoard.keepers)) {
         this.player.bullets.splice(i, 1);
       } else {
@@ -141,11 +150,11 @@ class Game {
     if (this.gameTime > 0 &&
         this.player.lifeLeft > 0 &&
        !this.player.homeReached ) {
-      window.requestAnimationFrame(this.gameLoop.bind(this));
-    }
+        this.animationId = window.requestAnimationFrame(this.gameLoop.bind(this));
+    } 
   }
  
-  keyFunction(e) {
+  keyFunction = (e) => {
         switch (e.key) {
           case "ArrowLeft":
             this.player.moveLeft(this.gameBoard.obstacles, this.gameBoard.surprises);
@@ -168,9 +177,9 @@ class Game {
             this.player.timeFound = false;
         }
   }
-  addListeners() {   
-    document.removeEventListener("keydown", this.keyFunction.bind(this));
-    document.addEventListener("keydown", this.keyFunction.bind(this));
+  addListeners() {
+    document.removeEventListener("keydown", this.keyFunction, true);
+    document.addEventListener("keydown", this.keyFunction, true);
   }
 }
 
