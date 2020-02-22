@@ -111,8 +111,6 @@ class GameBoard {
         !(xPosition === 0 && yPosition === 0) &&
         !this.checkArray(this.obstacles,xPosition, yPosition)
       ) {
-        // console.log("Value of i : " + i);
-        // console.log("[xPosition, yPosition] : " + xPosition + ", " + yPosition);
         this.obstacles.push([xPosition, yPosition]);
       }
     }
@@ -130,8 +128,6 @@ class GameBoard {
         this.surprises.push([xPosition, yPosition, "k"]);
       } else if (i === 3) {
         this.surprises.push([xPosition, yPosition, "t"]);
-      } else if (i === 4) {
-        this.surprises.push([xPosition, yPosition, "e"]);
       } else {
         this.surprises.push([xPosition, yPosition, "0"]);
       }
@@ -145,7 +141,6 @@ class GameBoard {
   }
   restoreKeepers() {
     this.keepers.forEach(keeper => {
-      // console.log("keeper.x" + keeper.x, "y: " + keeper.y);
       this.ctx.drawImage(this.keeper_image, keeper.x-15, keeper.y-15);
     });
   }
@@ -165,13 +160,6 @@ class GameBoard {
         case "b":
           this.ctx.drawImage(this.bomb_image, surprise[0] + 2, surprise[1] + 2);
           break;
-        case "e":
-          this.ctx.drawImage(
-            this.bowser_image,
-            surprise[0] + 2,
-            surprise[1] + 2
-          );
-          break;
         case "t":
           this.ctx.drawImage(this.time_image, surprise[0] + 2, surprise[1] + 2);
           break;
@@ -180,7 +168,4 @@ class GameBoard {
       }
     });
   }
-  // checkCollision(x, y) {
-  //   return false;
-  // }
 }

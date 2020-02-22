@@ -13,7 +13,7 @@ class Game {
     this.startButton.addEventListener("click", () => this.start());
   }
   start() {
-    console.log("this.gameBoard : " + this);
+
     this.player.initialise();
     this.gameTime = 100;
     this.gameBoard.initialise();
@@ -23,7 +23,6 @@ class Game {
     clearInterval(this.gameInterval);
     clearInterval(this.keeperInterval);
 
-    console.log("obstacles create" + this.gameBoard.obstacles);
     this.isObstacleCreated = true;
 
     window.requestAnimationFrame(this.gameLoop.bind(this));
@@ -38,11 +37,9 @@ class Game {
     this.gameInterval = setInterval(() => {
       this.gameTime--;
       if(this.player.timeFound){
-        // console.log("timefound"); 
        this.gameTime += 20;
        this.player.timeFound = false;
      }
-      // console.log("this.gameTime = " + this.gameTime);
       if (this.player.lifeLeft === 0 ){
         gameRemaningTime.innerHTML = `Sorry, Game Over !!! Better luck next time`;
       } else if (this.player.homeReached) {
@@ -52,20 +49,12 @@ class Game {
       } else {
         gameRemaningTime.innerHTML = `Sorry, Game Over !!! Better luck next time`;
       }
-      // });
     }, 1000);
     this.keeperInterval = setInterval(() => {
-
-    //   var keeperCount = 0;
       this.gameBoard.keepers.forEach(keeper => {
-        // keeperCount++;
-        // console.log("Keeper : " + keeperCount);
-        // console.log("keeper.direction[1] :"+keeper.direction[1]);
         if (keeper.direction[1] >= 60) {
           keeper.direction[1] = 0;
           let randomNumber = Number(Math.floor(Math.random() * 4));
-        //    console.log("randomNumber :" + randomNumber)
-          
           if (randomNumber === 0) {
             keeper.direction[0] = "l";
           }
@@ -79,11 +68,9 @@ class Game {
             keeper.direction[0] = "s";
           }
         }
-        // console.log("keeper.direction[0]" + keeper.direction[0]);
         switch (keeper.direction[0]) {
           case "l":
             if (keeper.direction[1] <= 60) {
-            //   console.log("Move left");
               keeper.moveLeft(
                 this.gameBoard.obstacles,
                 this.gameBoard.surprises
@@ -92,7 +79,6 @@ class Game {
             break;
           case "r":
             if (keeper.direction[1] <= 60) {
-            //   console.log("Move Right");
               keeper.moveRight(
                 this.gameBoard.obstacles,
                 this.gameBoard.surprises
@@ -101,7 +87,6 @@ class Game {
             break;
           case "s":
             if (keeper.direction[1] <= 60) {
-            //   console.log("Move Down");
               keeper.moveDown(
                 this.gameBoard.obstacles,
                 this.gameBoard.surprises
@@ -110,7 +95,6 @@ class Game {
             break;
           case "n":
             if (keeper.direction[1] <= 60) {
-            //   console.log("Move Up");
               keeper.moveUp(this.gameBoard.obstacles, this.gameBoard.surprises);
             }
             break;
@@ -122,7 +106,6 @@ class Game {
   checkCollision() {
       let hitKeeper = false;
       this.gameBoard.keepers.map(keeper => {
-        // console.log('keeper.x:' + keeper.x +" x: "+ this.player.x +" keeper.y : "+ keeper.y +" y: "+ this.player.y);
         if (this.player.x > (keeper.x - 15) && this.player.x < (keeper.x + 15)) {
           if (this.player.y > (keeper.y - 15) && this.player.y < (keeper.y + 15)) {
             
@@ -139,20 +122,15 @@ class Game {
     this.gameBoard.restoreSurprises();
     this.gameBoard.restoreObstacles();
     this.gameBoard.restoreKeepers();
-    // console.log("keepers"+ this.gameBoard.keepers);
     
     if(this.checkCollision()){
        this.player.lifeLeft--;
        this.player.speed = 0;
     }
 
-    //console.log("this.isObstacleCreated :"+this.isObstacleCreated);
     this.player.draw(ctx);
-    // console.log("this.keepers.length" + this.gameBoard.keepers.length);
 
     for (let i = 0; i < this.player.bullets.length; i++) {
-      // console.log("this.gameBoard.obstacles : "+ this.gameBoard.obstacles);
-    //   console.log("keepers"+ this.gameBoard.keepers);
       if (this.player.bullets[i].move(this.gameBoard.obstacles, this.gameBoard.keepers)) {
         this.player.bullets.splice(i, 1);
       } else {
@@ -160,36 +138,28 @@ class Game {
       }
     }
 
-    if (
-      this.gameTime > 0 &&
-      this.player.lifeLeft > 0 &&
-      !this.player.homeReached 
-    ) {
+    if (this.gameTime > 0 &&
+        this.player.lifeLeft > 0 &&
+       !this.player.homeReached ) {
       window.requestAnimationFrame(this.gameLoop.bind(this));
     }
   }
  
   keyFunction(e) {
-      console.log(e)
         switch (e.key) {
           case "ArrowLeft":
-            // console.log("Move Left");
             this.player.moveLeft(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "ArrowRight":
-            // console.log("Move Right");
             this.player.moveRight(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "ArrowUp":
-            // console.log("Move Up");
             this.player.moveUp(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "ArrowDown":
-            // console.log("Move Down");
             this.player.moveDown(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "s":
-            // console.log("obstacles : "+obstacles)
             this.player.shoot(this.gameBoard.obstacles);
             break;
         }
@@ -198,40 +168,13 @@ class Game {
             this.player.timeFound = false;
         }
   }
-  addListeners(player, obstacles, surprises) {
-    
+  addListeners() {   
     document.removeEventListener("keydown", this.keyFunction.bind(this));
     document.addEventListener("keydown", this.keyFunction.bind(this));
-    // document.addEventListener("keydown", function(e) {
-    //   switch (e.key) {
-    //     case "ArrowLeft":
-    //       // console.log("Move Left");
-    //       player.moveLeft(obstacles, surprises);
-    //       break;
-    //     case "ArrowRight":
-    //       // console.log("Move Right");
-    //       player.moveRight(obstacles, surprises);
-    //       break;
-    //     case "ArrowUp":
-    //       // console.log("Move Up");
-    //       player.moveUp(obstacles, surprises);
-    //       break;
-    //     case "ArrowDown":
-    //       // console.log("Move Down");
-    //       player.moveDown(obstacles, surprises);
-    //       break;
-    //     case "s":
-    //       // console.log("obstacles : "+obstacles)
-    //       player.shoot(obstacles);
-    //       break;
-    //   }
-    // });
   }
 }
 
 const game = new Game();
-
-// game.start();
 
 
 
