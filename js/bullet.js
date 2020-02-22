@@ -8,7 +8,7 @@ class Bullet {
   }
   draw(ctx) {
     ctx.beginPath();
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "#cc0000";
     ctx.arc(this.x, this.y, 5, 0, (Math.PI / 180) * 360);
     ctx.fill();
     ctx.closePath();
