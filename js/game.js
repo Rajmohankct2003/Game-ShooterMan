@@ -45,7 +45,7 @@ class Game {
       // console.log("this.gameTime = " + this.gameTime);
       if (this.player.lifeLeft === 0 ){
         gameRemaningTime.innerHTML = `Sorry, Game Over !!! Better luck next time`;
-      } else if (this.player.homeRached) {
+      } else if (this.player.homeReached) {
         gameRemaningTime.innerHTML = `Congratulations !!! you won the game`;
       } else if (this.gameTime > 0) {
         gameRemaningTime.innerHTML = `Remaining Time : ${this.gameTime}`;
@@ -160,83 +160,72 @@ class Game {
       }
     }
 
-    // this.keepers.forEach((keeper, index) => {
-    //     keeper.x -= keeper.speed
-
-    //     if(this.checkCollision(keeper, this.player)) {
-    //         this.keepers.splice(index, 1)
-    //     }
-
-    //     keeper.draw(ctx)
-    //     if (keeper.x < -80) {
-    //         this.keepers.splice(index, 1)
-    //     }
-    // })
     if (
       this.gameTime > 0 &&
       this.player.lifeLeft > 0 &&
-      !this.player.homeRached 
+      !this.player.homeReached 
     ) {
       window.requestAnimationFrame(this.gameLoop.bind(this));
     }
   }
  
-  keyFunction(e, player, obstacles, surprises) {
+  keyFunction(e) {
+      console.log(e)
         switch (e.key) {
           case "ArrowLeft":
             // console.log("Move Left");
-            player.moveLeft(obstacles, surprises);
+            this.player.moveLeft(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "ArrowRight":
             // console.log("Move Right");
-            player.moveRight(obstacles, surprises);
+            this.player.moveRight(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "ArrowUp":
             // console.log("Move Up");
-            player.moveUp(obstacles, surprises);
+            this.player.moveUp(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "ArrowDown":
             // console.log("Move Down");
-            player.moveDown(obstacles, surprises);
+            this.player.moveDown(this.gameBoard.obstacles, this.gameBoard.surprises);
             break;
           case "s":
             // console.log("obstacles : "+obstacles)
-            player.shoot(obstacles);
+            this.player.shoot(this.gameBoard.obstacles);
             break;
         }
-        if (player.timeFound){
+        if (this.player.timeFound){
             this.gameTime += 20;
-            player.timeFound = false;
+            this.player.timeFound = false;
         }
   }
   addListeners(player, obstacles, surprises) {
     
-    // document.removeEventListener("keydown", this.keyFunction(event, player, obstacles, surprises));
-    // document.addEventListener("keydown", this.keyFunction(event, player, obstacles, surprises));
-    document.addEventListener("keydown", function(e) {
-      switch (e.key) {
-        case "ArrowLeft":
-          // console.log("Move Left");
-          player.moveLeft(obstacles, surprises);
-          break;
-        case "ArrowRight":
-          // console.log("Move Right");
-          player.moveRight(obstacles, surprises);
-          break;
-        case "ArrowUp":
-          // console.log("Move Up");
-          player.moveUp(obstacles, surprises);
-          break;
-        case "ArrowDown":
-          // console.log("Move Down");
-          player.moveDown(obstacles, surprises);
-          break;
-        case "s":
-          // console.log("obstacles : "+obstacles)
-          player.shoot(obstacles);
-          break;
-      }
-    });
+    document.removeEventListener("keydown", this.keyFunction.bind(this));
+    document.addEventListener("keydown", this.keyFunction.bind(this));
+    // document.addEventListener("keydown", function(e) {
+    //   switch (e.key) {
+    //     case "ArrowLeft":
+    //       // console.log("Move Left");
+    //       player.moveLeft(obstacles, surprises);
+    //       break;
+    //     case "ArrowRight":
+    //       // console.log("Move Right");
+    //       player.moveRight(obstacles, surprises);
+    //       break;
+    //     case "ArrowUp":
+    //       // console.log("Move Up");
+    //       player.moveUp(obstacles, surprises);
+    //       break;
+    //     case "ArrowDown":
+    //       // console.log("Move Down");
+    //       player.moveDown(obstacles, surprises);
+    //       break;
+    //     case "s":
+    //       // console.log("obstacles : "+obstacles)
+    //       player.shoot(obstacles);
+    //       break;
+    //   }
+    // });
   }
 }
 
